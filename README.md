@@ -9,4 +9,4 @@ There is a repetition time for sending the alarm again.
 It also have the logic to check on boot if a fermentor have an active step runnig and put it on Automatic.
 This option is selectable from a global Parameter .
 
-For sending the email several globa parmas are needed, as email server, user, pass and email destination of the alarm.
+For sending the email several global params are needed, as email server, user, pass and email destination of the alarm.
