@@ -152,7 +152,7 @@ def initFermSupervisor(app):
     auto_start = app.get_config_parameter("auto_start",None)
     if auto_start is None:
         auto_start = "No"
-        cbpi.add_config_parameter("auto_start", "No", "text", "Auto start fermenters with active steps" "options=['No','Yes']")
+        cbpi.add_config_parameter("auto_start", "No", "text", "Auto start fermenters with active steps on boot", "options=['No','Yes']")
 
 
 
