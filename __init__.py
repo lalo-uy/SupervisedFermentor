@@ -14,7 +14,7 @@ class SupervHysteresis(FermenterController):
     heater_offset_max = Property.Number("Heater Offset OFF", True, 0, description="Offset as decimal number when the heater is switched off. Should be smaller then 'Heater Offset ON'. For example a value of 1 switches off the heater if the current temperature is 1 degree below the target temperature")
     cooler_offset_min = Property.Number("Cooler Offset ON", True, 0, description="Offset as decimal number when the cooler is switched on. Should be greater then 'Cooler Offset OFF'. For example a value of 2 switches on the cooler if the current temperature is 2 degrees above the target temperature")
     cooler_offset_max = Property.Number("Cooler Offset OFF", True, 0, description="Offset as decimal number when the cooler is switched off. Should be less then 'Cooler Offset ON'. For example a value of 1 switches off the cooler if the current temperature is 1 degree above the target temperature")
-    super_active = Property.Select("Active supervision", options=[0,1], description="Supervision on this Fermenter ON/OFF")
+    super_active = Property.Select("Active supervision", options=["No","Yes"], description="Supervision on this Fermenter ON/OFF")
     max_temp_off = Property.Number("Max Alowed temp error", True, 0, description="Max temp offset alarm threshold")
     min_temp_off = Property.Number("Min Alowed temp error", True, 0, description="Min temp offset alarm threshold")
     rep_time = Property.Number("Repetition time", True, 0, description="Repetition time of alarmemail (0 no repetition)")
@@ -45,7 +45,7 @@ class SupervHysteresis(FermenterController):
             if temp <= target_temp + float(self.cooler_offset_max):
                 self.cooler_off()
 
-            if int(self.super_active) == 1:
+            if self.super_active) == "Yes":
  		if abs(temp - target_temp) > float(self.max_temp_off) and self.alarmed == 0:
                 	self.alarm_time=time.time()
                 	self.alarmed = 1
@@ -152,7 +152,7 @@ def initFermSupervisor(app):
     auto_start = app.get_config_parameter("auto_start",None)
     if auto_start is None:
         auto_start = "No"
-        cbpi.add_config_parameter("auto_start", "No", "text", "Auto start fermenters with active steps on boot", "options=['No','Yes']")
+        cbpi.add_config_parameter("auto_start", "No", "select", "Auto start fermenters with active steps on boot", options=["No","Yes"])
 
 
 
