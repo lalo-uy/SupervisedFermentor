@@ -45,7 +45,7 @@ class SupervHysteresis(FermenterController):
             if temp <= target_temp + float(self.cooler_offset_max):
                 self.cooler_off()
 
-            if self.super_active) == "Yes":
+            if self.super_active == "Yes":
  		if abs(temp - target_temp) > float(self.max_temp_off) and self.alarmed == 0:
                 	self.alarm_time=time.time()
                 	self.alarmed = 1
