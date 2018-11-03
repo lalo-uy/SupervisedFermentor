@@ -109,7 +109,7 @@ def ferm_supervisor_background_task(a):
 
                             t = cbpi.socketio.start_background_task(target=run, instance=instance)
                         value.state = not value.state
-                        cbpi.emit("UPDATE_FERMENTER", key)
+                        cbpi.emit("UPDATE_FERMENTER", value)
                     except Exception as e:
                         print e
                         cbpi.notify("Toogle Fementer Controller failed", "Pleae check the %s configuration" % value.name,
