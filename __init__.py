@@ -14,7 +14,7 @@ class SupervHysteresis(FermenterController):
     heater_offset_max = Property.Number("Heater Offset OFF", True, 0, description="Offset as decimal number when the heater is switched off. Should be smaller then 'Heater Offset ON'. For example a value of 1 switches off the heater if the current temperature is 1 degree below the target temperature")
     cooler_offset_min = Property.Number("Cooler Offset ON", True, 0, description="Offset as decimal number when the cooler is switched on. Should be greater then 'Cooler Offset OFF'. For example a value of 2 switches on the cooler if the current temperature is 2 degrees above the target temperature")
     cooler_offset_max = Property.Number("Cooler Offset OFF", True, 0, description="Offset as decimal number when the cooler is switched off. Should be less then 'Cooler Offset ON'. For example a value of 1 switches off the cooler if the current temperature is 1 degree above the target temperature")
-    super_active = Property.Select("Active supervision", options=["No","Yes"], description="Supervision on this Fermenter ON/OFF")
+    super_active = Property.Select("Active supervision", options=["No","Yes"], description="Supervision on this Fermenter No/Yes")
     max_temp_off = Property.Number("Max Alowed temp error", True, 0, description="Max temp offset alarm threshold")
     min_temp_off = Property.Number("Min Alowed temp error", True, 0, description="Min temp offset alarm threshold")
     rep_time = Property.Number("Repetition time", True, 0, description="Repetition time of alarmemail (0 no repetition)")
@@ -33,19 +33,20 @@ class SupervHysteresis(FermenterController):
             target_temp = self.get_target_temp()
             temp = self.get_temp()
 
-            if temp + float(self.heater_offset_min) <= target_temp:
+	    if temp != None:
+              if temp + float(self.heater_offset_min) <= target_temp:
                 self.heater_on(100)
 
-            if temp + float(self.heater_offset_max) >= target_temp:
+              if temp + float(self.heater_offset_max) >= target_temp:
                 self.heater_off()
 
-            if temp >= target_temp + float(self.cooler_offset_min):
+              if temp >= target_temp + float(self.cooler_offset_min):
                 self.cooler_on(100)
 
-            if temp <= target_temp + float(self.cooler_offset_max):
+              if temp <= target_temp + float(self.cooler_offset_max):
                 self.cooler_off()
 
-            if self.super_active == "Yes":
+              if self.super_active == "Yes":
  		if abs(temp - target_temp) > float(self.max_temp_off) and self.alarmed == 0:
                 	self.alarm_time=time.time()
                 	self.alarmed = 1
@@ -53,6 +54,7 @@ class SupervHysteresis(FermenterController):
  		if abs(temp - target_temp) < float(self.min_temp_off) and self.alarmed == 1:
                 	self.alarm_time=0
                 	self.alarmed = 0
+
 
 
             self.sleep(1)
@@ -82,7 +84,7 @@ def ferm_supervisor_background_task(a):
                 server.starttls()
                 server.login(cbpi.cache['config']['mail_user'].value, cbpi.cache['config']['mail_psw'].value)
  
-                msg = "Subject: CraftBeerPi Alarm \r\n\r\n Alarm on "+value.name+" temp "+stemp.__str__()+"  at "+strftime("%H:%M:%S on %Y %b %d ", localtime())
+                msg = "Subject: CraftBeerPi Alarm \r\n\r\n Alarm on "+value.name+" temp "+stemp.__str__()+ " set point "+value.target_temp.__str__()+"  at "+strftime("%H:%M:%S on %Y %b %d ", localtime())
                 server.sendmail(cbpi.cache['config']['mail_user'].value, cbpi.cache['config']['mail_dest'].value, msg)
                 server.quit()
 
@@ -90,7 +92,7 @@ def ferm_supervisor_background_task(a):
         if auto_start == 'Yes' and (not value.state) and len(value.steps) > 0:
             for step in value.steps:
                 if step.state == "A":
-                    print "arrancar ", key, step.state
+                    print "Starting ", key, step.state
                     try:
                         print value.state
                         # Start controller
